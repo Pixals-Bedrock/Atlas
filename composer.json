@@ -1,0 +1,19 @@
+{
+    "name": "pixals/atlas",
+    "description": "Atlas is a MySQL-Only Database Executor",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Innovation Wing - oPinqzz"
+        }
+    ],
+    "require": {},
+    "minimum-stability": "stable",
+    "autoload": {"classmap": ["src"]},
+    "extra": {
+        "virion": {
+            "spec": "3.0",
+            "namespace-root": "AtlasDB\\PixalsLibs"
+        }
+    }
+}
