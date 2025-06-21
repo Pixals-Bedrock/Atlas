@@ -8,7 +8,7 @@
 
 ## 🚀 Features
 
-- ✅ **True Multithreading**: Uses `pthreads` to offload queries from the main thread.
+- ✅ **True Multithreading**: Uses `pmmpthreads` to offload queries from the main thread.
 - ✅ **Fiber-compatible Await API**: Works seamlessly with `Await::f2c()` for async-style flow [Still under Development].
 - ✅ **ThreadSafe Query Model**: AtlasQuery is a fully serializable, thread-safe unit of work.
 - ✅ **Result Propagation**: Queries return results back to the main thread using safe bridges [Still under Development].
