@@ -3,44 +3,34 @@
 
 namespace AtlasDB\PixalsLibs\queries;
 
-use AtlasDB\PixalsLibs\ConnectionManager;
 use AtlasDB\PixalsLibs\managers\WorkersManager;
+use AtlasDB\PixalsLibs\result\DeferredResult;
 use AtlasDB\PixalsLibs\threads\AtlasQuery;
-use AtlasDB\PixalsLibs\threads\AtlasWorker;
 use Closure;
+use Generator;
+use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\ClosureTask;
 
 class QueriesManager {
 
-    protected static array $callbacks = [];
+    private static $queries = [];
 
-    public static function registerCallback(string $id, callable $success, ?callable $fail): void {
-        self::$callbacks[$id] = [$success, $fail];
-    }
-
-    public function executeQuery(AtlasQuery $atlasQuery, ?Closure $onSuccess, ?Closure $onFail) : void {
+    public function executeQuery(AtlasQuery $atlasQuery, Closure $onSuccess) : void {
         $queue = WorkersManager::getQueue();
         $queue[] = $atlasQuery; 
-        
+        self::$queries[spl_object_hash($atlasQuery)] = [$atlasQuery, $onSuccess];
     }
 
-    public static function handleQueryCompletion(AtlasQuery $query): void {
-        $id = $query->getId();
-        $result = $query->getResult();
-        var_dump(array_keys(self::$callbacks));
-
-        var_dump("Query $id completed");
-
-        if (isset(self::$callbacks[$id])) {
-            [$onSuccess, $onFail] = self::$callbacks[$id];
-            
-            if ($onSuccess !== null) {
-                $onSuccess($result);
+    public function completionHandlerEnable(PluginBase $plugin) : void {
+        $plugin->getScheduler()->scheduleRepeatingTask(new ClosureTask(function() {
+            foreach(self::$queries as $id => [$atlasQuery, $onSuccess]){
+                if($atlasQuery->getResult() !== null) {
+                    ($onSuccess)($atlasQuery->getResult());
+                    unset(self::$queries[$id]);
+                }
             }
-
-            unset(self::$callbacks[$id]);
-        } else {
-            var_dump("No callback registered for $id");
-        }
+        }), 1);
     }
+
 
 }

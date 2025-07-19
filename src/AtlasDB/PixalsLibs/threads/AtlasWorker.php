@@ -28,7 +28,7 @@ class AtlasWorker extends Thread {
     public function onRun() : void {
         $connection_data = $this->connection->deserialize();
 
-        while(true) {
+        while(!$this->isKilled) {
 
             
             if(self::$db_connection == null) {
@@ -42,10 +42,12 @@ class AtlasWorker extends Thread {
                 }
                 if($query instanceof AtlasQuery) {
                     $query->doQuery(self::$db_connection);   
+                    unset($this->queue[array_search($query, (array) $this->queue)]);
+                    
                 }
             }
 
-
+            usleep(1000);
 
         }
     }
