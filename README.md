@@ -15,15 +15,19 @@ Built to solve the latency and blocking issues caused by synchronous queries on 
 ---
 
 ## 🛠️ Usage Example
+
+
 - To Get Data From The Query:
-  ```php
-  Await::f2c(function(){
-      $deferred = new DeferredResult();
-      $query = new TestQuery($deferred);
-      $result = yield from Await::promise(fn($accept) => (new QueriesManager)->executeQuery($query, $accept));
-      var_dump($result);
-  });
-  ```
+```php
+Await::f2c(function(){
+  $deferred = new DeferredResult();
+  $query = new TestQuery($deferred);
+  $result = yield from Await::promise(fn($accept) => (new QueriesManager)->executeQuery($query, $accept));
+  var_dump($result);
+});
+```
+
+
 - Query Example:
 ```php
 <?php
