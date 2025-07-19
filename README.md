@@ -1,21 +1,64 @@
-# Atlas DB System
+# Atlas
 
-**Atlas** is a multithreaded asynchronous MySQL query system built for PocketMine-MP. It provides a clean, non-blocking API using fibers and a thread-safe queuing model for executing MySQL queries in worker threads with callback support.
-
-> ⚡ Designed for performance-critical Bedrock servers like [Pixals], Designed By the Innovation Wing of Pixals..
-
----
-
-## 🚀 Features
-
-- ✅ **True Multithreading**: Uses `pmmpthreads` to offload queries from the main thread.
-- ✅ **Fiber-compatible Await API**: Works seamlessly with `Await::f2c()` for async-style flow [Still under Development].
-- ✅ **ThreadSafe Query Model**: AtlasQuery is a fully serializable, thread-safe unit of work.
-- ✅ **Result Propagation**: Queries return results back to the main thread using safe bridges [Still under Development].
-- ✅ **No Blocking, No Lag**: Queries are handled in background workers, keeping tick performance smooth.
+Atlas is a high-performance multithreaded database query framework for PocketMine-MP, Built for Performance-First Servers Like Pixals.  
+Built to solve the latency and blocking issues caused by synchronous queries on the main thread, Atlas offloads query execution to dedicated worker threads while ensuring clean callback handling on the main thread.
 
 ---
 
-## 📦 Installation
+## ⚡ Key Features
 
-Will be Released After the Finish of Development.
+- **Multithreaded Query System** using PocketMine’s threading infrastructure
+- **Non-Blocking Result Handling** with clean success callbacks
+- **Supports Generators** and promise-style `Await::promise` integration
+- **Scalable for Active Servers** — designed to handle high concurrency with minimal lag
+
+---
+
+## 🛠️ Usage Example
+- To Get Data From The Query:
+  ```php
+  Await::f2c(function(){
+      $deferred = new DeferredResult();
+      $query = new TestQuery($deferred);
+      $result = yield from Await::promise(fn($accept) => (new QueriesManager)->executeQuery($query, $accept));
+      var_dump($result);
+  });
+  ```
+- Query Example:
+```php
+<?php
+
+
+namespace Test;
+
+use AtlasDB\PixalsLibs\result\DeferredResult;
+use AtlasDB\PixalsLibs\threads\AtlasQuery;
+use mysqli;
+
+class TestQuery extends AtlasQuery {
+
+    public function __construct(DeferredResult $r)
+    {
+        parent::__construct($r);
+    }
+
+    public function doQuery(mysqli $connection): void
+    {
+        $query = $connection->query("SELECT * FROM data;");
+        $this->setResult($query->fetch_assoc());        
+    }
+}
+```
+---
+
+## Created By:
+- Innovation Wing of Pixals Network , Under Direct Supervision of oPinqzz, Innovation Wing Leader.
+
+## License
+```License: MIT with Attribution Requirement
+
+You are free to use, modify, and distribute this project — commercially or non-commercially — as long as credit is given to the original author. Contributions are welcome.
+```
+
+## Pixals Network 2025 - Innovation Wing.
+
