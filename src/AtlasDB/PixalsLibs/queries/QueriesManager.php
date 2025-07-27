@@ -26,12 +26,13 @@ class QueriesManager {
             foreach(self::$queries as $id => [$atlasQuery, $onSuccess, $onError]){
                 if($atlasQuery->getResult() !== null && $onSuccess !== null) {
                     ($onSuccess)($atlasQuery->getResult());
+                    unset(self::$queries[$id]);
                 }
                 if($atlasQuery->getError() !== null && $onError !== null) {
                     ($onError)($atlasQuery->getError());
+                    unset(self::$queries[$id]);
                 }
 
-                unset(self::$queries[$id]);
             }
         }), 1);
     }
