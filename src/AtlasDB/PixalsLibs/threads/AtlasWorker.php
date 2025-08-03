@@ -38,7 +38,8 @@ class AtlasWorker extends Thread {
 
             if(count($this->queue) > 0) {
                 $query = $this->queue->shift();
-                if(self::$db_connection->connect_errno) {
+                if(!self::$db_connection->stat()) {
+                    self::$db_connection->close();
                     self::$db_connection = new mysqli($connection_data->getIP(), $connection_data->getUsername(), $connection_data->getPassword(), $connection_data->getDatabase(), $connection_data->getPort());
                 }
                 if($query instanceof AtlasQuery) {
@@ -60,6 +61,7 @@ class AtlasWorker extends Thread {
     public static function getConnection() : mysqli {
         return self::$db_connection;
     }
+
 
 
 }
